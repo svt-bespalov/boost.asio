@@ -19,9 +19,7 @@
 
 namespace asio = boost::asio;
 
-#define LAMBDA
-
-#ifdef LAMBDA
+#ifdef CALLBACK
 void Callback(boost::system::error_code ec,
               std::shared_ptr<asio::ip::tcp::socket> sock)
 {
@@ -40,7 +38,7 @@ void Callback(boost::system::error_code ec,
 
     std::cout << "[Worker thread]: Connected successfully.\n";
 }
-#endif // LAMBDA
+#endif // CALLBACK
 
 int main()
 {
@@ -57,7 +55,7 @@ int main()
         asio::io_context ioc;
         auto sock = std::make_shared<asio::ip::tcp::socket>(ioc, ep.protocol());
 
-#ifdef LAMBDA
+#ifdef CALLBACK
         sock->async_connect(
             ep,
             std::bind(Callback, std::placeholders::_1, sock)
@@ -84,7 +82,7 @@ int main()
             }
         );
 
-#endif // LAMBDA
+#endif // CALLBACK
 
         auto workerThread = std::thread([&ioc]() {
             try
